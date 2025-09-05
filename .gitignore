@@ -1,3 +1,8 @@
 /target
 
+# Dont push bot tokens.
 .env
+
+# Dont push bot data.
+# TODO: currently hardcoded, if the bot state directory changes, this ill break.
+/data

@@ -90,9 +90,6 @@ async fn main() -> anyhow::Result<()> {
 fn spawn_scheduler(ctx: poise::serenity_prelude::Context, state: AppState) {
     tokio::spawn(async move {
         loop {
-            if let Err(e) = run_once(&ctx, &state).await {
-                error!("scheduler error: {:?}", e);
-            }
             let now_utc = chrono::Utc::now();
             let now_local = state.timezone.from_utc_datetime(&now_utc.naive_utc());
             let next_local = {
@@ -112,6 +109,10 @@ fn spawn_scheduler(ctx: poise::serenity_prelude::Context, state: AppState) {
             };
             let dur = (next_local - now_local).to_std().unwrap_or_default();
             sleep_until(Instant::now() + dur).await;
+
+            if let Err(e) = run_once(&ctx, &state).await {
+                error!("scheduler error: {:?}", e);
+            }
         }
     });
 }
